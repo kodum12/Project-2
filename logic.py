@@ -31,9 +31,9 @@ class Logic(QMainWindow, Ui_Calculator):
         self.sine_button.clicked.connect(lambda: self.add_trig_function('sin('))
         self.cosine_button.clicked.connect(lambda: self.add_trig_function('cos('))
         self.tangent_button.clicked.connect(lambda: self.add_trig_function('tan('))
-        self.arcsine_button.clicked.connect(lambda: self.add_trig_function('SI-1('))
-        self.arccos_button.clicked.connect(lambda: self.add_trig_function('CO-1('))
-        self.arctan_button.clicked.connect(lambda: self.add_trig_function('TA-1('))
+        self.arcsine_button.clicked.connect(lambda: self.add_trig_function('arcsin('))
+        self.arccos_button.clicked.connect(lambda: self.add_trig_function('arccos'))
+        self.arctan_button.clicked.connect(lambda: self.add_trig_function('arctan('))
 
         # Connect other buttons
         self.addition_button.clicked.connect(lambda: self.operation_clicked('+'))
@@ -121,83 +121,37 @@ class Logic(QMainWindow, Ui_Calculator):
             numeric_values = set(re.findall(r'\d*\.?\d+', self.expression))
 
             for user_answer in numeric_values:
-                self.expression = self.expression.replace(f'√({user_answer})', f'math.sqrt({user_answer})')
+                self.expression = self.expression.replace(f'√({user_answer})', str(eval(f'math.sqrt({user_answer})')))
+                if self.degree_mode:
+                    if f"arcsin({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arcsin({user_answer})",
+                                                              str(eval(f"(math.asin(math.radians({user_answer})))")))
+                    elif f"arccos({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arccos({user_answer})",
+                                                                      str(eval(f"(math.acos(math.radians({user_answer})))")))
+                    elif f"arctan({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arctan({user_answer})",
+                                                                      str(eval(f"(math.atan(math.radians({user_answer})))")))
+                    elif f"sin({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"sin({user_answer})", str(eval(f"(math.sin(math.radians({user_answer})))")))
+                    elif f"cos({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"cos({user_answer})",str(eval(f"(math.cos(math.radians({user_answer})))")))
+                    elif f"tan({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"tan({user_answer})",str(eval(f"(math.tan(math.radians({user_answer})))")))
 
-                if self.degreeChecked:
-                    # Replace inverse trig functions with degrees conversion in degree mode
-                    if f"math.asin(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.asin({user_answer}))",
-                                                f"math.degrees(math.asin({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'SI-1({user_answer})',
-                                                                  f"math.asin(math.radians({user_answer}))")
-
-                    if f"math.acos(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.acos({user_answer}))",
-                                                f"math.degrees(math.acos({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'CO-1({user_answer})',
-                                                                  f"math.acos(math.radians({user_answer}))")
-
-                    if f"math.atan(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.atan({user_answer}))",
-                                                f"math.degrees(math.atan({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'TA-1({user_answer})',
-                                                                  f"math.atan(math.radians({user_answer}))")
-
-
-
-                    if f"math.sin(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.sin({user_answer}))",
-                                                f"math.degrees(math.sin({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'sin({user_answer})',
-                                                                  f"math.sin(math.radians({user_answer}))")
-
-                    if f"math.cos(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.cos({user_answer}))",
-                                                f"math.degrees(math.cos({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'cos({user_answer})',
-                                                                  f"math.cos(math.radians({user_answer}))")
-
-                    if f"math.tan(math.radians({user_answer}))" in self.expression:
-                        self.expression.replace(f"math.degrees(math.tan({user_answer}))",
-                                                f"math.degrees(math.tan({user_answer}))")
-                    else:
-                        self.expression = self.expression.replace(f'tan({user_answer})',
-                                                                  f"math.tan(math.radians({user_answer}))")
-                else:
-                    if f'math.asin({user_answer})' in self.expression:
-                        self.expression.replace(f'math.asin({user_answer})', f'math.asin({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'SI-1({user_answer})', f'math.asin({user_answer})')
-
-                    if f'math.acos({user_answer})' in self.expression:
-                        self.expression.replace(f'math.acos({user_answer})', f'math.acos({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'CO-1({user_answer})', f'math.acos({user_answer})')
-
-                    if f'math.atan({user_answer})' in self.expression:
-                        self.expression.replace(f'math.atan({user_answer})', f'math.atan({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'TA-1({user_answer})', f'math.atan({user_answer})')
-
-                    if f'math.sin({user_answer})' in self.expression:
-                        self.expression.replace(f'math.sin({user_answer})', f'math.sin({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'sin({user_answer})', f'math.sin({user_answer})')
-
-                    if f'math.cos({user_answer})' in self.expression:
-                        self.expression.replace(f'math.cos({user_answer})', f'math.cos({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'cos({user_answer})', f'math.cos({user_answer})')
-
-                    if f'math.tan({user_answer})' in self.expression:
-                        self.expression.replace(f'math.tan({user_answer})', f'math.tan({user_answer})')
-                    else:
-                        self.expression = self.expression.replace(f'tan({user_answer})', f'math.tan({user_answer})')
+                elif self.radian_mode:
+                    if f"arcsin({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arcsin({user_answer})",str(eval(f"math.asin{user_answer})")))
+                    elif f"arccos({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arccos({user_answer})",str(eval(f"math.acos({user_answer})")))
+                    elif f"arctan({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"arctan({user_answer})",str(eval(f"math.atan({user_answer})")))
+                    elif f"sin({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"sin({user_answer})",str(eval(f"math.sin({user_answer})")))
+                    elif f"cos({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"cos({user_answer})",str(eval(f"math.cos({user_answer})")))
+                    elif f"tan({user_answer})" in self.expression:
+                        self.expression = self.expression.replace(f"tan({user_answer})",str(eval(f"math.tan({user_answer})")))
 
 
 
@@ -210,5 +164,6 @@ class Logic(QMainWindow, Ui_Calculator):
                 'Error. Please check your input and try again.'
             )
             self.current_input = ''
-            print(str(e))
+           
+
 
